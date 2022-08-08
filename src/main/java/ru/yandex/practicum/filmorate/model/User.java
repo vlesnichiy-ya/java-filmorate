@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Data
 public class User {
-    private int id = 0;
+    private long id = 0;
     @Email (message = "Указан некорректный email.")
     private String email;
 
@@ -23,7 +23,4 @@ public class User {
     @Past (message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday; // ДР не может быть в будущем
 
-    public int generateID() {
-        return ++id;
-    }
 }
