@@ -12,6 +12,8 @@ public interface FilmStorage {
 
     public Film getFilm(Long id);
 
+    public boolean checkFilmId(Long id);
+
     public Film updateFilm(Film film);
 
     public void addLike(Long id, Long userId);

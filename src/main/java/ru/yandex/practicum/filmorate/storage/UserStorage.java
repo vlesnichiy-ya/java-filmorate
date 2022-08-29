@@ -22,5 +22,7 @@ public interface UserStorage {
 
     public void deleteFriend(Long userId, Long friendId);
 
-    public void validateUserId(Long id);
+    public boolean isUserExists(Long id);
+
+    public boolean isLoginValid(User user);
 }
