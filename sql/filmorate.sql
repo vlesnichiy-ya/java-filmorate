@@ -11,84 +11,88 @@ CREATE TYPE "friendship" AS ENUM (
   'confirmed'
 );
 
-CREATE TABLE "Film" (
+CREATE TABLE "films" (
   "id" long PRIMARY KEY,
   "description" varchar,
   "release_date" date,
   "duration" int,
   "rating" int,
   "rating_mpa" rating_mpa,
-  "genre" int
+  "genres" int
 );
 
-CREATE TABLE "genre" (
+CREATE TABLE "films_genres" (
+  "link_id" int PRIMARY KEY,
+  "film_id" long,
+  "genre_id" int
+);
+
+CREATE TABLE "genres" (
   "id" int PRIMARY KEY,
-  "genre" string
+  "genre" varchar
 );
 
-CREATE TABLE "Likes" (
+CREATE TABLE "likes" (
+  "like_id" long PRIMARY KEY,
   "film_id" long,
   "user_id" long
 );
 
-CREATE TABLE "User" (
+CREATE TABLE "users" (
   "id" long PRIMARY KEY,
-  "email" string,
-  "login" string,
-  "name" string,
+  "email" varchar,
+  "login" varchar,
+  "name" varchar,
   "birth_date" date
 );
 
-CREATE TABLE "Friends" (
+CREATE TABLE "friends" (
   "user_id" long,
   "friend_id" long,
   "status" friendship
 );
 
-CREATE TABLE "next_id" (
-  "user_next_id" long,
-  "film_next_id" long
+COMMENT ON TABLE "films_genres" IS 'Connection table for store films and genres links';
+
+COMMENT ON TABLE "likes" IS 'Connection table for store film rating';
+
+COMMENT ON TABLE "friends" IS 'Connection table for store friendship records';
+
+CREATE TABLE "films_likes" (
+  "films_id" long NOT NULL,
+  "likes_film_id" long NOT NULL,
+  PRIMARY KEY ("films_id", "likes_film_id")
 );
 
-COMMENT ON TABLE "Likes" IS 'Connection table for store film rating';
+ALTER TABLE "films_likes" ADD FOREIGN KEY ("films_id") REFERENCES "films" ("id");
 
-COMMENT ON TABLE "Friends" IS 'Connection table for store friendship records';
+ALTER TABLE "films_likes" ADD FOREIGN KEY ("likes_film_id") REFERENCES "likes" ("film_id");
 
-COMMENT ON TABLE "next_id" IS 'Stores next IDs of film and user ';
 
-ALTER TABLE "Film" ADD FOREIGN KEY ("genre") REFERENCES "genre" ("id");
-
-CREATE TABLE "Film_Likes" (
-  "Film_id" long NOT NULL,
-  "Likes_film_id" long NOT NULL,
-  PRIMARY KEY ("Film_id", "Likes_film_id")
+CREATE TABLE "users_likes" (
+  "users_id" long NOT NULL,
+  "likes_user_id" long NOT NULL,
+  PRIMARY KEY ("users_id", "likes_user_id")
 );
 
-ALTER TABLE "Film_Likes" ADD FOREIGN KEY ("Film_id") REFERENCES "Film" ("id");
+ALTER TABLE "users_likes" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
-ALTER TABLE "Film_Likes" ADD FOREIGN KEY ("Likes_film_id") REFERENCES "Likes" ("film_id");
+ALTER TABLE "users_likes" ADD FOREIGN KEY ("likes_user_id") REFERENCES "likes" ("user_id");
 
 
-CREATE TABLE "User_Likes" (
-  "User_id" long NOT NULL,
-  "Likes_user_id" long NOT NULL,
-  PRIMARY KEY ("User_id", "Likes_user_id")
+ALTER TABLE "friends" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+CREATE TABLE "users_friends" (
+  "users_id" long NOT NULL,
+  "friends_friend_id" long NOT NULL,
+  PRIMARY KEY ("users_id", "friends_friend_id")
 );
 
-ALTER TABLE "User_Likes" ADD FOREIGN KEY ("User_id") REFERENCES "User" ("id");
+ALTER TABLE "users_friends" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
-ALTER TABLE "User_Likes" ADD FOREIGN KEY ("Likes_user_id") REFERENCES "Likes" ("user_id");
+ALTER TABLE "users_friends" ADD FOREIGN KEY ("friends_friend_id") REFERENCES "friends" ("friend_id");
 
 
-ALTER TABLE "Friends" ADD FOREIGN KEY ("user_id") REFERENCES "User" ("id");
+ALTER TABLE "films_genres" ADD FOREIGN KEY ("film_id") REFERENCES "films" ("id");
 
-CREATE TABLE "User_Friends" (
-  "User_id" long NOT NULL,
-  "Friends_friend_id" long NOT NULL,
-  PRIMARY KEY ("User_id", "Friends_friend_id")
-);
-
-ALTER TABLE "User_Friends" ADD FOREIGN KEY ("User_id") REFERENCES "User" ("id");
-
-ALTER TABLE "User_Friends" ADD FOREIGN KEY ("Friends_friend_id") REFERENCES "Friends" ("friend_id");
-
+ALTER TABLE "films_genres" ADD FOREIGN KEY ("genre_id") REFERENCES "genres" ("id");
